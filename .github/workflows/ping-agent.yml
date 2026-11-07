@@ -1,0 +1,34 @@
+# Posts one comment as github-actions[bot].
+#
+# Why a bot and not the operator: the GitHub Source drops every message authored
+# by the agent's own login (sameName checks in src/sources/github.ts), so a comment
+# written by the operator account can never become a trigger while the agent CLI is
+# signed in as that same account. github-actions[bot] is a different actor, so its
+# comment goes through the normal path.
+#
+# Remove this workflow once a real agent account is wired in.
+name: ping-dsh-superagent
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: Issue number to comment on
+        required: true
+        default: '1'
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post a copy-fix request mentioning the agent account
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE: ${{ inputs.issue }}
+        run: |
+          body='@beijigu81-sudo Copy fix: in `.github/ping-demo.md` the word "sentense" is a typo for "sentence". Please correct it and open a pull request.'
+          gh issue comment "$ISSUE" --repo "$GITHUB_REPOSITORY" --body "$body"
