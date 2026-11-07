@@ -1,0 +1,22 @@
+name: ping-agent
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: Issue number to comment on
+        required: true
+
+permissions:
+  issues: write
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post the request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUTS_ISSUE: ${{ inputs.issue }}
+        run: |
+          gh issue comment "${INPUTS_ISSUE}" --repo "${GITHUB_REPOSITORY}" --body '@beijigu81-sudo Copy fix: in `smoke/ping-demo.md` the word "sentense" in the second paragraph is a typo for "sentence". Please correct it and open a pull request.'
